@@ -48,3 +48,15 @@ class Coordinate:
         x_global: float = x * GlobalVars.tile_size + GlobalVars.tile_size / 2
         y_global: float = y * GlobalVars.tile_size + GlobalVars.tile_size / 2
         return Coordinate(x_global, y_global)
+
+    def __eq__(self, other: "Coordinate") -> bool:
+        """
+        Порівнює координати у з похибкою у третину тайлу
+        :param other: координати для порівняння
+        :return: True, якщо модуль різниці x_global та модуль різниці y_global двох екземплярів
+        менша за третину довжини тайлу. В іншому випадку повертає False
+        """
+        if abs(self.x_global - other.x_global) < GlobalVars.tile_size / 3 \
+                and abs(self.y_global - other.y_global) < GlobalVars.tile_size / 3:
+            return True
+        return False
