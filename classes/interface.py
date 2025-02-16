@@ -6,6 +6,9 @@ from classes.global_vars import GlobalVars
 
 
 class Interface:
+    """
+    Відповідає за інтерфейс гри, включаючи відображення здоров'я та очок.
+    """
     def __init__(self):
         pygame.font.init()
         self.font = pygame.font.Font('static_file\\fonts\\PressStart2P.ttf', int(GlobalVars.tile_size/1.2))  # Створюємо шрифт
@@ -14,6 +17,9 @@ class Interface:
 
 
     class PacmanHealth:
+        """
+        Відображає та оновлює кількість життів Пакмана.
+        """
         def __init__(self):
             self.health = []
             for i in range(GlobalVars.pacman.health):
@@ -23,6 +29,9 @@ class Interface:
 
         @staticmethod
         def get_images():
+            """
+            Завантажує та повертає анімацію для індикатора здоров'я.
+            """
             health_frames = [
                 pygame.transform.scale(
                     pygame.image.load(f'static_file\\pacman_photos\\pacman1.png'),
@@ -33,18 +42,26 @@ class Interface:
             return health_animation
 
         def update(self):
+            """
+            Оновлює анімацію здоров'я.
+            """
             for i in self.health:
                 i.update(0)
 
 
 
     def delete_health(self):
+        """
+        Видаляє одне життя з індикатора здоров'я.
+        """
         if self.health_bar.health:
             self.health_bar.health.pop()
 
 
     def draw_misc(self, _delta):
-        """Малює очки на екрані"""
+        """
+        Відображає очки та оновлює стан здоров'я на екрані.
+        """
         screen = GlobalVars.screen
         if screen:
             score_text = self.font.render(f'Score: {int(GlobalVars.score)}', True, 'white')
