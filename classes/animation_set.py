@@ -42,3 +42,26 @@ class AnimationSet:
         )
         GlobalVars.screen.blit(rotated_frame, draw_position)
 
+    def update(self, delta: float, position) -> None:
+        """
+        Оновлює поточний кадр анімації на основі delta-часу.
+
+        :param delta: Час, що минув з останнього оновлення
+        :param position: Об'єкт з координатами x_global та y_global
+        """
+        if not self.frames:
+            return
+
+        self.draw(position)
+        self._timer += delta
+        if self._timer < self.time[self.frame]:
+            return
+
+        while self._timer > self.time[self.frame]:
+            self._timer -= self.time[self.frame]
+            self.frame += 1
+            if self.frame >= len(self.frames):
+                if self.cycle:
+                    self.frame = 0
+                else:
+                    self.frame -= 1
