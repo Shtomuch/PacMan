@@ -18,9 +18,13 @@ def get_game_params():
     """
     Запитуємо у користувача через консоль:
       - кількість життів (int),
-      - колір фону (r,g,b).
+      - колір фону (r,g,b),
+      - розміри екрану (w,h).
     Якщо користувач нічого не вводить або вводить некоректно,
-    беремо дефолтні значення (3 життя, фон (0,20,0)).
+    беремо дефолтні значення:
+      - 3 життя,
+      - фон (0,20,0),
+      - розміри: 900x950.
     """
     try:
         lives = int(input("Введіть кількість життів (дефолт = 3): ") or 3)
@@ -28,111 +32,118 @@ def get_game_params():
         lives = 3
 
     try:
-        color_input = input("Введіть колір фону (r,g,b), дефолт=(0,20,0): ") or "0,20,0"
+        color_input = input("Введіть колір фону (r,g,b), дефолт=(0,20,0): ")
+        if not color_input.strip():
+            raise ValueError
         r, g, b = map(int, color_input.split(","))
         bg_color = (r, g, b)
-    except:
+    except ValueError:
         bg_color = (0, 20, 0)
 
     try:
-        width, height = map(int, input("Введіть ширину та висоту (w,h) (дефолт 900 на 950): ").split(","))
-    except:
+        size_input = input("Введіть ширину та висоту (w,h) (дефолт 900 на 950): ")
+        if not size_input.strip():
+            raise ValueError
+        width, height = map(int, size_input.split(","))
+    except ValueError:
         width = 900
         height = 950
 
     return lives, bg_color, width, height
 
 
+def wait_for_keypress(screen, overlay, draw_callback):
+    """
+    Загальна функція для очікування натискання клавіші,
+    оновлюючи екран із заданим overlay і викликом функції для малювання.
+    """
+    waiting = True
+    while waiting:
+        clock.tick(60)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                waiting = False
+
+        screen.fill((0, 0, 0))
+        screen.blit(overlay, (0, 0))
+        draw_callback(screen)
+        pygame.display.flip()
+
+
 def show_start_overlay(screen):
     """
-    Напівпрозорий екран з текстом:
-    "Натисніть будь-яку клавішу, щоб розпочати гру",
-    з простим переносом рядків, якщо текст занадто широкий.
+    Відображає напівпрозорий стартовий екран з текстом:
+    "Натисніть будь-яку клавішу, щоб розпочати гру".
+    Якщо текст занадто широкий, розбиває його на два рядки.
     """
     overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
     overlay.fill((0, 0, 0, 128))  # 50% прозорості
-    font = pygame.font.SysFont('static_file\\fonts\\PressStart2P.ttf', 36)
+
+    font = pygame.font.SysFont("static_file\\fonts\\PressStart2P.ttf", 36)
     text = "Натисніть будь-яку клавішу, щоб розпочати гру"
 
-    # Встановлюємо максимальну ширину тексту з невеликим відступом:
+    # Встановлюємо максимальну ширину тексту з відступом:
     max_width = screen.get_width() - 40
 
-    # Якщо текст перевищує max_width, розбиваємо його приблизно навпіл.
+    # Розбиваємо текст на рядки, якщо він занадто широкий.
     if font.size(text)[0] > max_width:
         words = text.split()
         mid = len(words) // 2
-        line1 = " ".join(words[:mid])
-        line2 = " ".join(words[mid:])
-        lines = [line1, line2]
+        lines = [" ".join(words[:mid]), " ".join(words[mid:])]
     else:
         lines = [text]
 
-    # Рендеримо кожен рядок окремо.
     text_surfaces = [font.render(line, True, (255, 255, 255)) for line in lines]
     total_height = sum(surf.get_height() for surf in text_surfaces) + (len(text_surfaces) - 1) * 10
     start_y = (screen.get_height() - total_height) // 2
 
-    waiting = True
-    while waiting:
-        pygame.time.Clock().tick(60)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.KEYDOWN:
-                waiting = False
-
-        screen.fill((0, 0, 0))
-        screen.blit(overlay, (0, 0))
+    def draw_overlay(surf):
         y = start_y
-        for surf in text_surfaces:
-            rect = surf.get_rect(center=(screen.get_width() // 2, y + surf.get_height() // 2))
-            screen.blit(surf, rect)
-            y += surf.get_height() + 10
-        pygame.display.flip()
+        for ts in text_surfaces:
+            rect = ts.get_rect(center=(surf.get_width() // 2, y + ts.get_height() // 2))
+            surf.blit(ts, rect)
+            y += ts.get_height() + 10
+
+    wait_for_keypress(screen, overlay, draw_overlay)
 
 
 def show_end_overlay(screen, final_score):
+    """
+    Відображає напівпрозорий екран завершення гри з фінальним рахунком.
+    """
     overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
     overlay.fill((0, 0, 0, 128))  # напівпрозорий фон
 
-    font = pygame.font.SysFont('static_file\\fonts\\PressStart2P.ttf', 36)
+    font = pygame.font.SysFont("static_file\\fonts\\PressStart2P.ttf", 36)
     lines = [
         f"Гру завершено. Ваш рахунок: {int(final_score)}",
         "Натисніть будь-яку клавішу,",
-        "щоб закрити гру"
+        "щоб закрити гру",
     ]
     text_surfaces = [font.render(line, True, (255, 255, 255)) for line in lines]
-    text_rects = [
-        surface.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + i * 40))
-        for i, surface in enumerate(text_surfaces)
-    ]
+    total_height = sum(s.get_height() for s in text_surfaces) + (len(text_surfaces) - 1) * 40
+    start_y = (screen.get_height() - total_height) // 2
 
-    waiting = True
-    while waiting:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.KEYDOWN:
-                waiting = False
+    def draw_overlay(surf):
+        y = start_y
+        for ts in text_surfaces:
+            rect = ts.get_rect(center=(surf.get_width() // 2, y + ts.get_height() // 2))
+            surf.blit(ts, rect)
+            y += ts.get_height() + 40
 
-        screen.fill((0, 0, 0))
-        screen.blit(overlay, (0, 0))
-        # Ітеруємося по кожній парі поверхня/прямокутник:
-        for surface, rect in zip(text_surfaces, text_rects):
-            screen.blit(surface, rect)
-        pygame.display.flip()
+    wait_for_keypress(screen, overlay, draw_overlay)
+
 
 def main():
     # screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Pac-Man Clone")
 
     lives, bg_color, width, height = get_game_params()
-
-    # show_start_overlay(screen)
-
     level = Level(board, pacman_health=lives, bg_color=bg_color, screen_w=width, screen_h=height)
+
     show_start_overlay(GlobalVars.screen)
 
     running = True
