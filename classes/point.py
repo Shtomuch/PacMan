@@ -1,6 +1,7 @@
-"""Модуль для об'єктів, що дають бали: фрукти, монети та великі монети."""
-
+import os
 import pygame
+
+# Класи для керування очками, анімацією та глобальними змінними
 from classes.score import Score
 from classes.animation import Animation
 from classes.animation_set import AnimationSet
@@ -8,109 +9,131 @@ from classes.global_vars import GlobalVars
 from classes.next_move import NextMove
 from classes.power import Power
 
-
 class Point:
-    """Базовий клас для об'єктів, що дають бали."""
-    def __init__(self, coordinates, points=0) -> None:
+    """
+    Клас Point: базова точка, яку можна зібрати на ігровому полі.
+    """
+    def __init__(self, coordinates, points=0):
+        # Зберігаємо координати та ініціалізуємо анімацію й очки
         self.coordinates = coordinates
-        self.animation = Animation(self.get_images(), coordinates)  # Ініціалізація анімації
-        self.score = Score(points)  # Встановлення балів
-        self.next_move = NextMove("point", self.update)  # Реєстрація оновлення
+        self.animation = Animation(self.get_images(), coordinates)
+        self.score = Score(points)
+        # Наступний крок (update) викликає оновлення
+        self.next_move = NextMove("point", self.update)
 
     @staticmethod
     def get_images():
-        pass  # Має бути перевизначено у нащадків
+        # Місце для повернення списку анімацій, перевизначається в нащадках
+        pass
 
-    def disappear(self) -> None:
-        self.score.active()  # Активує рахунок
-        self.next_move.remove_func()  # Зупиняє оновлення
+    def disappear(self):
+        # Активація отримання очок і припинення оновлення
+        self.score.active()
+        self.next_move.remove_func()
 
-    def update(self, delta: float) -> None:
-        self.animation.update(delta)  # Оновлення анімації
+    def update(self, delta):
+        # Оновлення анімації
+        self.animation.update(delta)
 
 
 class Cherry(Point):
-    """Вишня, що дає 100 балів."""
-    def __init__(self, coordinates) -> None:
+    """
+    Клас Cherry: вишня з ігрового поля, дає 100 очок.
+    """
+    def __init__(self, coordinates):
         super().__init__(coordinates, points=100)
 
     @staticmethod
     def get_images() -> list:
+        # Завантаження зображення вишні та створення анімації
         cherry_frames = [
             pygame.transform.scale(
-                pygame.image.load('static_file\\fruits_photos\\cherry.png'),
+                pygame.image.load(os.path.join('static_file', 'fruits_photos', 'cherry.png')),
                 (GlobalVars.tile_size, GlobalVars.tile_size)
             )
         ]
-        # Повертає набір анімації для вишні
-        cherry_animation = [AnimationSet(frames=cherry_frames, time=[0.2] * len(cherry_frames), name="chery_animation")]
+        cherry_animation = [
+            AnimationSet(frames=cherry_frames, time=[0.2] * len(cherry_frames), name="chery_animation")
+        ]
         return cherry_animation
 
 
 class Strawberry(Point):
-    """Полуниці, що дають 300 балів."""
-    def __init__(self, coordinates) -> None:
+    """
+    Клас Strawberry: полуниця з ігрового поля, дає 300 очок.
+    """
+    def __init__(self, coordinates):
         super().__init__(coordinates, points=300)
 
     @staticmethod
-    def get_images() -> list:
+    def get_images():
+        # Завантаження зображення полуниці та створення анімації
         strawberry_frames = [
             pygame.transform.scale(
-                pygame.image.load('static_file\\fruits_photos\\strawberry.png'),
+                pygame.image.load(os.path.join('static_file', 'fruits_photos', 'strawberry.png')),
                 (GlobalVars.tile_size, GlobalVars.tile_size)
             )
         ]
-        # Повертає набір анімації для полуниці
-        strawberry_animation = [AnimationSet(frames=strawberry_frames, time=[0.2] * len(strawberry_frames), name="strawberry_animation")]
+        strawberry_animation = [
+            AnimationSet(frames=strawberry_frames, time=[0.2] * len(strawberry_frames), name="strawberry_animation")
+        ]
         return strawberry_animation
 
 
 class Dot(Point):
-    """Монета, що дає 10 балів."""
-    def __init__(self, coordinates) -> None:
+    """
+    Клас Dot: маленька крапка (монетка), дає 10 очок.
+    """
+    def __init__(self, coordinates):
         super().__init__(coordinates, points=10)
 
     @staticmethod
     def get_images() -> list:
+        # Завантаження зображень монет та створення анімації
         dot_frames = [
             pygame.transform.scale(
-                pygame.image.load('static_file\\coin_photos\\coin.png'),
+                pygame.image.load(os.path.join('static_file', 'coin_photos', 'coin.png')),
                 (GlobalVars.tile_size, GlobalVars.tile_size)
             ),
             pygame.transform.scale(
-                pygame.image.load("static_file\\coin_photos\\smaller_coin.png"),
+                pygame.image.load(os.path.join('static_file', 'coin_photos', 'smaller_coin.png')),
                 (GlobalVars.tile_size, GlobalVars.tile_size)
             )
         ]
-        # Повертає набір анімації для монети
         dot_animation = [AnimationSet(frames=dot_frames, time=[0.5] * len(dot_frames), name="dot_animation")]
         return dot_animation
 
 
 class BigDot(Point):
-    """Велика монета, що дає 50 балів та активує ефект Power."""
-    def __init__(self, coordinates) -> None:
+    """
+    Клас BigDot: велика крапка (велика монета), дає 50 очок.
+    """
+    def __init__(self, coordinates):
         super().__init__(coordinates, points=50)
 
     @staticmethod
     def get_images() -> list:
+        # Завантаження зображень великої монети та створення анімації
         big_dot_frames = [
             pygame.transform.scale(
-                pygame.image.load('static_file\\coin_photos\\big_coin.png'),
+                pygame.image.load(os.path.join('static_file', 'coin_photos', 'big_coin.png')),
                 (GlobalVars.tile_size, GlobalVars.tile_size)
             ),
             pygame.transform.scale(
-                pygame.image.load("static_file\\coin_photos\\smaller_big_coin.png"),
+                pygame.image.load(os.path.join('static_file', 'coin_photos', 'smaller_big_coin.png')),
                 (GlobalVars.tile_size, GlobalVars.tile_size)
             )
         ]
-        # Повертає набір анімації для великої монети
-        big_dot_animation = [AnimationSet(frames=big_dot_frames, time=[0.1] * len(big_dot_frames), name="big_dot_animation")]
+        big_dot_animation = [
+            AnimationSet(frames=big_dot_frames, time=[0.1] * len(big_dot_frames), name="big_dot_animation")
+        ]
         return big_dot_animation
 
-    def update(self, delta: float) -> None:
-        self.animation.update(delta)  # Оновлення анімації
+    def update(self, delta):
+        # Оновлення анімації
+        self.animation.update(delta)
 
-    def disappear(self) -> None:
-        super().disappear()  # Виконує базову логіку зникнення
-        Power.activate()  # Активує ефект Power
+    def disappear(self):
+        # Активувати очки, а також увімкнути Power
+        super().disappear()
+        Power.activate()

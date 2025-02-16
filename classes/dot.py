@@ -1,6 +1,4 @@
-"""Модуль для роботи з об'єктом Dot (монета, що дає бали)."""
-
-from tkinter.font import names  # імпорт (може не використовуватись)
+import os
 import pygame
 from classes.score import Score
 from classes.animation import Animation
@@ -9,35 +7,39 @@ from classes.animation_set import AnimationSet
 from classes.global_vars import GlobalVars
 
 class Dot:
-    """Клас Dot представляє монету з анімацією, рахунком та логікою зникнення."""
-    def __init__(self, coordinates) -> None:
-        """Ініціалізація Dot з координатами."""
+    def __init__(self, coordinates):
+        # Ініціалізація об'єкта Dot з заданими координатами
         self.coordinates = coordinates
-        self.animation = Animation(Dot.get_images(), coordinates)  # створення анімації
-        self.score = Score(10)  # встановлення балів
-        self.next_move = NextMove('point', self.update)  # реєстрація функції оновлення
+
+        # Створення анімації для об'єкта Dot
+        self.animation = Animation(Dot.get_images(), coordinates)
+        # Встановлення балів (10 балів)
+        self.score = Score(10)
+        # Реєстрація функції оновлення через NextMove
+        self.next_move = NextMove('point', self.update)
 
     @staticmethod
     def get_images() -> list:
-        """Повертає список з набором анімації для Dot."""
+        # Завантаження та масштабування зображень для анімації Dot
         dot_frames = [
             pygame.transform.scale(
-                pygame.image.load('static_file\\coin_photos\\coin.png'),
+                pygame.image.load(os.path.join("static_file", "coin_photos", "coin.png")),
                 (GlobalVars.tile_size, GlobalVars.tile_size)
             ),
             pygame.transform.scale(
-                pygame.image.load("static_file\\coin_photos\\smaller_coin.png"),
+                pygame.image.load(os.path.join("static_file", "coin_photos", "smaller_coin.png")),
                 (GlobalVars.tile_size, GlobalVars.tile_size)
             )
         ]
+        # Створення AnimationSet з кадрами та часом відображення
         dot_animation = [AnimationSet(frames=dot_frames, time=[0.2] * len(dot_frames), name="dot_animation")]
         return dot_animation
 
-    def update(self, delta: float) -> None:
-        """Оновлення анімації Dot."""
+    def update(self, delta):
+        # Оновлення анімації об'єкта Dot
         self.animation.update(delta)
 
-    def disappear(self) -> None:
-        """Активує рахунок і припиняє оновлення анімації."""
-        self.score.active()  # активуємо рахунок
-        self.next_move.remove_func()  # зупиняємо оновлення
+    def disappear(self):
+        # Активуємо додавання балів і видаляємо функцію оновлення
+        self.score.active()
+        self.next_move.remove_func()

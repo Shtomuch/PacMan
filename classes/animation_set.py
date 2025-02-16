@@ -1,19 +1,12 @@
-from classes.global_vars import GlobalVars
 import pygame
-
+from classes.global_vars import GlobalVars
 
 class AnimationSet:
-    """
-    Клас для керування анімаціями.
-    """
-
-    def __init__(self, frames: list[pygame.Surface], time: list[float], name: str):
+    def __init__(self, frames, time, name):
         """
-        Ініціалізація набору анімацій.
-
-        :param frames: Список кадрів анімації
-        :param time: Список часу відображення кожного кадру
-        :param name: Назва анімації
+        frames – список кадрів (pygame.Surface).
+        time – список затримок для кожного кадру.
+        name – ім'я анімації.
         """
         self.frames = frames
         self.time = time
@@ -24,12 +17,8 @@ class AnimationSet:
         self.direction = 0
         self.cycle = True
 
-    def draw(self, position) -> None:
-        """
-        Відображає поточний кадр анімації, враховуючи позицію як центр.
-
-        :param position: Об'єкт з координатами x_global та y_global
-        """
+    def draw(self, position):
+        """Відображаємо поточний кадр анімації, використовуючи позицію як центр."""
         if not self.frames:
             return
 
@@ -42,13 +31,8 @@ class AnimationSet:
         )
         GlobalVars.screen.blit(rotated_frame, draw_position)
 
-    def update(self, delta: float, position) -> None:
-        """
-        Оновлює поточний кадр анімації на основі delta-часу.
-
-        :param delta: Час, що минув з останнього оновлення
-        :param position: Об'єкт з координатами x_global та y_global
-        """
+    def update(self, delta, position):
+        """Оновлюємо поточний кадр, враховуючи delta-час та налаштування."""
         if not self.frames:
             return
 
@@ -56,7 +40,6 @@ class AnimationSet:
         self._timer += delta
         if self._timer < self.time[self.frame]:
             return
-
         while self._timer > self.time[self.frame]:
             self._timer -= self.time[self.frame]
             self.frame += 1

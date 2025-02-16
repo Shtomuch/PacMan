@@ -1,14 +1,9 @@
+
 class Animation:
-    """
-    Клас для управління анімацією на основі наборів анімацій.
-    """
-
-    def __init__(self, sets: list[AnimationSet], coordinates):
+    def __init__(self, sets, coordinates):
         """
-        Ініціалізація об'єкта анімації.
-
-        :param sets: Список доступних анімацій
-        :param coordinates: Позиція, де відображається анімація
+        sets – список об'єктів AnimationSet, які містять кадри анімації.
+        coordinates – позиція, де буде відображатися анімація.
         """
         self.sets = sets
         self.position = coordinates
@@ -17,37 +12,24 @@ class Animation:
         self.freeze = False
 
     @property
-    def current_animation(self) -> str:
-        """
-        Повертає назву поточної анімації.
-        """
+    def current_animation(self):
         return self.animation_set.name
 
     @current_animation.setter
-    def current_animation(self, value: str) -> None:
-        """
-        Змінює поточну анімацію, якщо знайдено відповідну назву.
-
-        :param value: Назва нової анімації
-        """
+    def current_animation(self, value):
         if value == self.current_animation:
             return
-
         for anim_set in self.sets:
             if anim_set.name == value:
                 self.animation_set = anim_set
                 return
-
         self.animation_set = self.sets[0]
 
-    def update(self, delta: float) -> None:
-        """
-        Оновлює анімацію та малює її, якщо необхідно.
-
-        :param delta: Час, що минув з останнього оновлення
-        """
+    def update(self, delta):
+        """Оновлюємо анімацію та відображаємо її, якщо потрібно."""
         self.animation_set.direction = self.direction
         if self.freeze:
+            # Якщо анімація заморожена, просто відображаємо поточний кадр
             self.animation_set.draw(self.position)
         else:
             self.animation_set.update(delta, self.position)

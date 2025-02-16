@@ -2,13 +2,10 @@ import pygame
 
 
 class GlobalVars:
-    """
-    Клас для зберігання глобальних змінних гри.
-    """
-    tile_size: float = 10
-    score: float = 0.0
-    screen: pygame.Surface = pygame.display.get_surface()
-    power_is_active: bool = False
+    tile_size = 10
+    score = 0.0
+    screen = pygame.display.get_surface()
+    power_is_active = False
     tilemap = None
     pacman = None
-    ghosts: list = []
+    ghosts = []
