@@ -162,4 +162,34 @@ class Ghost:
             self.move_unit.freeze = False
 
     def move(self, delta: float) -> None:
-        pass
+        """
+        Обчислює та здійснює рух привида у напрямку цілі, враховуючи його стан.
+        """
+        ghost = (self.state in ["in_house", "dead"])
+        dx = self._target.x_global - self.move_unit.coordinates.x_global
+        dy = self._target.y_global - self.move_unit.coordinates.y_global
+        if abs(dx) > abs(dy):
+            self.direction = 0 if dx > 0 else 2
+        else:
+            self.direction = 1 if dy > 0 else 3
+
+        if self.state == "frightened":
+            self.direction = abs(self.direction - 2)
+
+        if (self.move_unit.direction + self.direction) % 2 == 0 and not self.time_to_drop:
+            self.direction = self.move_unit.direction
+
+        tiles = GlobalVars.tilemap.get_neighbour_tiles(self.move_unit.coordinates)
+        if not tiles[self.move_unit.direction]:
+            pass
+        elif tiles[self.move_unit.direction].is_wall and not (tiles[self.move_unit.direction].is_grates and ghost):
+            if self.move_unit.direction == self.direction:
+                if self.direction % 2 == 0:
+                    self.direction = 1 if ((dy > 0) + (self.state == "frightened")) % 2 else 3
+                else:
+                    self.direction = 0 if ((dx > 0) + (self.state == "frightened")) % 2 else 2
+            if tiles[self.direction].is_wall:
+                self.direction = (self.direction + 2) % 4
+
+        self.move_unit.move(delta, self.direction, is_ghost=ghost)
+        self.time_to_drop = False
