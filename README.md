@@ -1,2 +1,0 @@
-# PacMan
-GameBrain
