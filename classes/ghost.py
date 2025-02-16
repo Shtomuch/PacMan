@@ -196,9 +196,9 @@ class Ghost:
             self.target = GlobalVars.tilemap.house
 
     def alive_logic(self):
-        # Якщо активовано Power, а примара не має імунітету, перехід до frightened
-        if GlobalVars.power_is_active and not self.immunity:
-            self.turn_frightened()
+        if GlobalVars.power_is_active:
+            if not self.immunity:
+                self.turn_frightened()
         else:
             self.immunity = False
 
