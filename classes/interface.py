@@ -61,7 +61,7 @@ class Interface:
             return health_animation
 
         def update(self):
-            # Оновлюємо анімацію кожної "життя"
+            # Оновлюємо анімацію кожного "життя"
             for i in self.health:
                 i.update(0)
 

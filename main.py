@@ -51,7 +51,7 @@ def show_start_overlay(screen):
     """
     overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
     overlay.fill((0, 0, 0, 128))  # 50% прозорості
-    font = pygame.font.SysFont('static_file\\fonts\\PressStart2P.ttf', 36)
+    font = pygame.font.Font('static_file\\fonts\\PressStart2P.ttf', 16)
     text = "Натисніть будь-яку клавішу, щоб розпочати гру"
 
     # Встановлюємо максимальну ширину тексту з невеликим відступом:
