@@ -2,10 +2,12 @@ import pytest
 from classes.global_vars import GlobalVars
 from classes.score import Score
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def reset_global_vars():
-    """Скидає глобальний рахунок перед кожним тестом."""
-    GlobalVars.score = 0
+    """Скидає GlobalVars.score тільки перед першим тестом у параметризованому наборі."""
+    if not hasattr(reset_global_vars, "score_reset_done"):
+        GlobalVars.score = 0
+        reset_global_vars.score_reset_done = True
 
 def test_score_initialization():
     """Перевіряємо правильність ініціалізації об'єкта Score."""
@@ -18,7 +20,7 @@ def test_score_initialization():
     (-3, 9),  # 12 - 3
     (10, 19), # 9 + 10
 ])
-def test_score_active_adds_points(delta, expected_score):
+def test_score_active_adds_points(delta, expected_score, reset_global_vars):
     """Перевіряємо, чи метод active додає очки до глобального рахунку."""
     s = Score(delta)
     s.active()
