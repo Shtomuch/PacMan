@@ -46,5 +46,6 @@ class AnimationSet:
             if self.frame >= len(self.frames):
                 if self.cycle:
                     self.frame = 0
+                    self._timer = 0 # Скидаємо таймер, щоб зайве не накопичувалося
                 else:
                     self.frame -= 1
