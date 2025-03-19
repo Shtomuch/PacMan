@@ -1,16 +1,19 @@
 import pytest
 from unittest.mock import patch, MagicMock
 import pygame
+import os
 
-# Припустимо, що Fruit, Cherry, Strawberry оголошені у файлі classes/fruit.py
-from classes.fruits import Fruit, Cherry, Strawberry
+# Припустимо, що Dot лежить у файлі classes/dot.py
+from classes.dot import Dot
 from classes.coordinates import Coordinate
+from classes.global_vars import GlobalVars
+from classes.animation_set import AnimationSet
 
 @pytest.fixture
 def mock_pygame_image():
     """
-    'Глушимо' pygame.image.load і pygame.transform.scale,
-    щоб не завантажувати реальні файли під час тестів.
+    Фікстура, що підміняє pygame.image.load і pygame.transform.scale,
+    аби не завантажувати реальні файли під час тестів.
     """
     with patch('pygame.image.load', return_value=MagicMock(spec=pygame.Surface)) as mock_load, \
          patch('pygame.transform.scale', return_value=MagicMock(spec=pygame.Surface)) as mock_scale:
@@ -19,93 +22,84 @@ def mock_pygame_image():
 @pytest.fixture
 def mock_os_path_join():
     """
-    'Глушимо' os.path.join, щоб не залежати від реальної файлової системи.
+    Фікстура, що підміняє os.path.join, щоб не залежати від реальної файлової системи.
     """
     with patch('os.path.join', side_effect=lambda *args: "/".join(args)) as mock_join:
         yield mock_join
 
 
-# ------------------- ТЕСТИ ДЛЯ БАЗОВОГО Fruit -------------------
-@patch('classes.fruit.Animation', autospec=True)
-@patch('classes.fruit.Score', autospec=True)
-@patch('classes.fruit.NextMove', autospec=True)
-def test_fruit_init(mock_nextmove, mock_score, mock_animation, mock_pygame_image, mock_os_path_join):
+# ------------------ ТЕСТ КОНСТРУКТОРА (__init__) ------------------
+@pytest.mark.usefixtures("mock_pygame_image", "mock_os_path_join")
+def test_dot_init():
     """
-    Мінімальний тест перевіряє, що Fruit можна створити без падіння,
-    і що поля (coordinates, score, animation, next_move) існують.
+    Перевіряє, що у Dot:
+      - зберігаються координати
+      - створюється animation, score, next_move
     """
+    GlobalVars.tile_size = 16
     coord = Coordinate(10, 20)
-    fruit = Fruit(coord, points=50)
+    dot = Dot(coord)
 
-    assert fruit is not None, "Fruit не створився!"
-    assert fruit.coordinates == coord
-    assert hasattr(fruit, 'score'), "У Fruit має бути поле 'score'"
-    assert hasattr(fruit, 'animation'), "У Fruit має бути поле 'animation'"
-    assert hasattr(fruit, 'next_move'), "У Fruit має бути поле 'next_move'"
+    assert dot.coordinates == coord, "Dot має зберігати передані координати."
+    assert hasattr(dot, 'animation'), "Dot має поле animation."
+    assert hasattr(dot, 'score'), "Dot має поле score."
+    assert hasattr(dot, 'next_move'), "Dot має поле next_move."
 
-@patch('classes.fruit.Animation', autospec=True)
-@patch('classes.fruit.Score', autospec=True)
-@patch('classes.fruit.NextMove', autospec=True)
-def test_fruit_disappear(mock_nextmove, mock_score, mock_animation, mock_pygame_image, mock_os_path_join):
+
+# ------------------ ТЕСТ СТАТИЧНОГО МЕТОДУ get_images() ------------------
+@pytest.mark.usefixtures("mock_pygame_image", "mock_os_path_join")
+def test_dot_get_images():
     """
-    Перевіряємо, що метод disappear() викликається без помилок
-    і викликає score.active() та next_move.remove_func().
+    Перевіряє, що get_images() повертає список із 1 AnimationSet,
+    у якого 2 кадри.
     """
-    fruit = Fruit(Coordinate(0, 0), points=10)
-    fruit.disappear()
+    GlobalVars.tile_size = 32
+    frames = Dot.get_images()
+    # Очікуємо, що буде рівно 1 AnimationSet
+    assert len(frames) == 1, "Dot.get_images має повертати список із 1 AnimationSet."
+    anim_set = frames[0]
+    assert isinstance(anim_set, AnimationSet), "Повернений елемент має бути AnimationSet."
+    # Перевіримо, що в AnimationSet.frames є 2 кадри
+    assert len(anim_set.frames) == 2, "Dot має мати 2 кадри (coin.png і smaller_coin.png)."
+    assert anim_set.name == "dot_animation", "Назва анімації має бути 'dot_animation'."
 
-    # Перевіримо, що score.active() викликано
-    mock_score.return_value.active.assert_called_once()
-    # Перевіримо, що next_move.remove_func() викликано
-    mock_nextmove.return_value.remove_func.assert_called_once()
 
-@patch('classes.fruit.Animation', autospec=True)
-@patch('classes.fruit.Score', autospec=True)
-@patch('classes.fruit.NextMove', autospec=True)
-def test_fruit_update(mock_nextmove, mock_score, mock_animation, mock_pygame_image, mock_os_path_join):
+# ------------------ ТЕСТ МЕТОДУ update(delta) ------------------
+def test_dot_update():
     """
     Перевіряємо, що update(delta) викликає animation.update(delta).
     """
-    fruit = Fruit(Coordinate(5, 5), points=10)
-    fruit.update(delta=0.1)
+    # Створимо Dot із замоканою анімацією
+    with patch('classes.dot.Animation', autospec=True) as mock_anim_class:
+        mock_anim = MagicMock()
+        mock_anim_class.return_value = mock_anim
 
-    # Має викликатися animation.update(0.1)
-    mock_animation.return_value.update.assert_called_once_with(0.1)
+        dot = Dot(Coordinate(5, 5))
+        dot.update(delta=0.1)
+        # Перевіряємо, чи викликали animation.update(0.1)
+        mock_anim.update.assert_called_once_with(0.1)
 
 
-# ------------------- ТЕСТИ ДЛЯ Cherry -------------------
-@pytest.mark.usefixtures("mock_pygame_image", "mock_os_path_join")
-@patch('classes.fruit.Animation', autospec=True)
-@patch('classes.fruit.Score', autospec=True)
-@patch('classes.fruit.NextMove', autospec=True)
-def test_cherry_init(mock_nextmove, mock_score, mock_animation):
+# ------------------ ТЕСТ МЕТОДУ disappear() ------------------
+def test_dot_disappear():
     """
-    Мінімальний тест для Cherry:
-    - створюємо об'єкт Cherry
-    - перевіряємо, що не падає
-    - перевіряємо, що поля існують
+    Перевіряємо, що disappear():
+      - викликає score.active()
+      - викликає next_move.remove_func()
     """
-    cherry = Cherry(Coordinate(7, 7))
-    assert cherry is not None
-    assert hasattr(cherry, 'score')
-    assert hasattr(cherry, 'animation')
-    assert hasattr(cherry, 'next_move')
+    with patch('classes.dot.Animation', autospec=True), \
+         patch('classes.dot.Score', autospec=True) as mock_score_class, \
+         patch('classes.dot.NextMove', autospec=True) as mock_nextmove_class:
+        # Створимо підроблені об'єкти для score і next_move
+        mock_score_obj = MagicMock()
+        mock_score_class.return_value = mock_score_obj
 
+        mock_nextmove_obj = MagicMock()
+        mock_nextmove_class.return_value = mock_nextmove_obj
 
-# ------------------- ТЕСТИ ДЛЯ Strawberry -------------------
-@pytest.mark.usefixtures("mock_pygame_image", "mock_os_path_join")
-@patch('classes.fruit.Animation', autospec=True)
-@patch('classes.fruit.Score', autospec=True)
-@patch('classes.fruit.NextMove', autospec=True)
-def test_strawberry_init(mock_nextmove, mock_score, mock_animation):
-    """
-    Мінімальний тест для Strawberry:
-    - створюємо об'єкт Strawberry
-    - перевіряємо, що не падає
-    - перевіряємо, що поля існують
-    """
-    strawb = Strawberry(Coordinate(10, 10))
-    assert strawb is not None
-    assert hasattr(strawb, 'score')
-    assert hasattr(strawb, 'animation')
-    assert hasattr(strawb, 'next_move')
+        dot = Dot(Coordinate(10, 10))
+        dot.disappear()
+
+        # Перевіряємо, що викликалися score.active() і next_move.remove_func()
+        mock_score_obj.active.assert_called_once()
+        mock_nextmove_obj.remove_func.assert_called_once()
