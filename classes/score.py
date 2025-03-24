@@ -1,4 +1,6 @@
 from classes.global_vars import GlobalVars
+
+
 class Score:
 
     def __init__(self, delta):

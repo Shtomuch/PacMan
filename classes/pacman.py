@@ -1,4 +1,5 @@
 import os
+
 import pygame
 
 # Імпортуємо класи для анімації, управління, глобальних змінних та ін.
@@ -9,10 +10,12 @@ from classes.move_unit import MoveUnit
 from classes.next_move import NextMove
 from classes.point import Point
 
+
 class Pacman:
     """
     Клас Pacman: керує логікою пересування, анімацією та здоров'ям Pac-Man.
     """
+
     def __init__(self, first_pos, health):
         # Створюємо об'єкт для пересування
         self.move_unit = MoveUnit(4, first_pos)
@@ -32,14 +35,16 @@ class Pacman:
         pacman_frames = [
             pygame.transform.scale(
                 pygame.image.load(
-                    os.path.join('static_file', 'pacman_photos', f'pacman{i}.png')
+                    os.path.join('static_file', 'pacman_photos',
+                                 f'pacman{i}.png')
                 ),
                 (GlobalVars.tile_size, GlobalVars.tile_size)
             )
             for i in range(1, 5)
         ]
         pacman_animation = [
-            AnimationSet(frames=pacman_frames, time=[0.1, 0.05] * 2, name="pacman_animation")
+            AnimationSet(frames=pacman_frames, time=[
+                         0.1, 0.05] * 2, name="pacman_animation")
         ]
         return pacman_animation
 
@@ -64,7 +69,8 @@ class Pacman:
         tile = GlobalVars.tilemap.get_tile(self.move_unit.coordinates)
         if tile:
             # Якщо є об'єкти та певний кадр анімації, збираємо Points
-            if tile.objects and self.animation.animation_set.frame == 2 or (GlobalVars.tile_size / 4 > d > 0):
+            if tile.objects and self.animation.animation_set.frame == 2 or (
+                    GlobalVars.tile_size / 4 > d > 0):
                 for obj in tile.objects:
                     if isinstance(obj, Point):
                         obj.disappear()

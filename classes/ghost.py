@@ -1,20 +1,23 @@
-import os
 import copy
+import os
+
 import pygame
 
 from classes.animation import Animation
-from classes.score import Score
-from classes.move_unit import MoveUnit
-from classes.next_move import NextMove
-from classes.global_vars import GlobalVars
 from classes.animation_set import AnimationSet
 from classes.coordinates import Coordinate
+from classes.global_vars import GlobalVars
+from classes.move_unit import MoveUnit
+from classes.next_move import NextMove
+from classes.score import Score
+
 
 class Ghost:
     """
     Базовий клас примари. Може бути в одному з кількох станів:
     'alive', 'frightened', 'dead', 'in_house'.
     """
+
     def __init__(self, coordinates, ghost_type):
         self.state = "in_house"
         self.target = coordinates
@@ -54,22 +57,25 @@ class Ghost:
                 frames_alive.append(
                     pygame.transform.scale(
                         pygame.image.load(
-                            os.path.join('static_file', 'ghost_photos', color, f'{color}_{d}_ghost{j}.png')
+                            os.path.join('static_file', 'ghost_photos',
+                                         color, f'{color}_{d}_ghost{j}.png')
                         ),
                         (GlobalVars.tile_size, GlobalVars.tile_size)
                     )
                 )
             ghost_animation.append(
-                AnimationSet(frames=frames_alive, time=[0.1] * len(frames_alive),
-                             name=f"ghost_animation_alive_{i}")
-            )
+                AnimationSet(
+                    frames=frames_alive,
+                    time=[0.1] * len(frames_alive),
+                    name=f"ghost_animation_alive_{i}"))
 
         # Анімації для стану "dead"
         for i, d in enumerate(directions):
             frames_dead = [
                 pygame.transform.scale(
                     pygame.image.load(
-                        os.path.join('static_file', 'ghost_photos', 'eyes', f'ghost_eyes_{d}.png')
+                        os.path.join('static_file', 'ghost_photos',
+                                     'eyes', f'ghost_eyes_{d}.png')
                     ),
                     (GlobalVars.tile_size, GlobalVars.tile_size)
                 )
@@ -83,21 +89,25 @@ class Ghost:
         frames_frightened = [
             pygame.transform.scale(
                 pygame.image.load(
-                    os.path.join('static_file', 'ghost_photos', 'eaten', 'eaten_ghost1.png')
+                    os.path.join('static_file', 'ghost_photos',
+                                 'eaten', 'eaten_ghost1.png')
                 ),
                 (GlobalVars.tile_size, GlobalVars.tile_size)
             ),
             pygame.transform.scale(
                 pygame.image.load(
-                    os.path.join('static_file', 'ghost_photos', 'eaten', 'eaten_ghost2.png')
+                    os.path.join('static_file', 'ghost_photos',
+                                 'eaten', 'eaten_ghost2.png')
                 ),
                 (GlobalVars.tile_size, GlobalVars.tile_size)
             )
         ]
         ghost_animation.append(
-            AnimationSet(frames=frames_frightened, time=[0.2] * len(frames_frightened),
-                         name="ghost_animation_frightened")
-        )
+            AnimationSet(
+                frames=frames_frightened,
+                time=[0.2] *
+                len(frames_frightened),
+                name="ghost_animation_frightened"))
         return ghost_animation
 
     @property
@@ -106,7 +116,8 @@ class Ghost:
 
     @target.setter
     def target(self, value):
-        raise NotImplementedError("Властивість Ghost.target() повинна бути перевизначена у підкласі")
+        raise NotImplementedError(
+            "Властивість Ghost.target() повинна бути перевизначена у підкласі")
 
     def turn_frightened(self):
         """
@@ -171,7 +182,8 @@ class Ghost:
             self.animation.current_animation = "ghost_animation_frightened"
         else:
             s = "alive" if self.state == "in_house" else self.state
-            self.animation.current_animation = f"ghost_animation_{s}_{self.move_unit.direction}"
+            self.animation.current_animation = f"ghost_animation_{s}_{
+                self.move_unit.direction}"
 
         self.animation.update(delta)
 
@@ -243,19 +255,23 @@ class Ghost:
             self.direction = abs(self.direction - 2)
 
         # Якщо напрямок незмінний, не перевизначаємо його
-        if (self.move_unit.direction + self.direction) % 2 == 0 and not self.time_to_drop:
+        if (self.move_unit.direction +
+                self.direction) % 2 == 0 and not self.time_to_drop:
             self.direction = self.move_unit.direction
 
         # Перевірка сусідніх тайлів
-        tiles = GlobalVars.tilemap.get_neighbour_tiles(self.move_unit.coordinates)
+        tiles = GlobalVars.tilemap.get_neighbour_tiles(
+            self.move_unit.coordinates)
         if not tiles[self.move_unit.direction]:
             pass
         elif tiles[self.move_unit.direction].is_wall and not (tiles[self.move_unit.direction].is_grates and ghost):
             if self.move_unit.direction == self.direction:
                 if self.direction % 2 == 0:
-                    self.direction = 1 if ((dy > 0) + (self.state == "frightened")) % 2 else 3
+                    self.direction = 1 if (
+                        (dy > 0) + (self.state == "frightened")) % 2 else 3
                 else:
-                    self.direction = 0 if ((dx > 0) + (self.state == "frightened")) % 2 else 2
+                    self.direction = 0 if (
+                        (dx > 0) + (self.state == "frightened")) % 2 else 2
             if tiles[self.direction].is_wall:
                 self.direction = (self.direction + 2) % 4
 
@@ -267,6 +283,7 @@ class Blinky(Ghost):
     """
     Blinky (червона примара): агресивно переслідує Pac-Man напряму.
     """
+
     def __init__(self, coordinates):
         super().__init__(coordinates, ghost_type=0)
         self.turn_alive()
@@ -285,6 +302,7 @@ class Pinky(Ghost):
     Pinky (рожева примара): намагається передбачити рух Pac-Man,
     випереджає його приблизно на 4 тайли.
     """
+
     def __init__(self, coordinates):
         super().__init__(coordinates, ghost_type=1)
 
@@ -314,6 +332,7 @@ class Inky(Ghost):
     Inky (блакитна примара): вибирає ціль як точку,
     віддзеркалену відносно Blinky.
     """
+
     def __init__(self, coordinates):
         super().__init__(coordinates, ghost_type=2)
 
@@ -341,6 +360,7 @@ class Clyde(Ghost):
     При цьому "близько" і "далеко" визначаються за допомогою
     Manhattan-відстані (coward_distance, angry_distance).
     """
+
     def __init__(self, coordinates):
         self.coward = False
         self.coward_distance = 8
@@ -359,7 +379,7 @@ class Clyde(Ghost):
             return
 
         dist = abs(self._target.x_global - self.move_unit.coordinates.x_global) \
-               + abs(self._target.y_global - self.move_unit.coordinates.y_global)
+            + abs(self._target.y_global - self.move_unit.coordinates.y_global)
 
         # Перевіряємо, чи треба тікати або переслідувати
         if self.coward:

@@ -1,8 +1,10 @@
-import pytest
-import pygame
 from unittest.mock import MagicMock
-from classes.global_vars import GlobalVars
+
+import pygame
+import pytest
+
 from classes.animation_set import AnimationSet
+from classes.global_vars import GlobalVars
 
 
 @pytest.fixture
@@ -43,7 +45,8 @@ def test_draw(sample_animation, setup_pygame):
     position.x_global = 100
     position.y_global = 100
 
-    sample_animation.draw(position)  # Виклик draw не повинен спричиняти помилки
+    # Виклик draw не повинен спричиняти помилки
+    sample_animation.draw(position)
 
 
 def test_update_no_frames(setup_pygame):
@@ -68,7 +71,10 @@ def test_update(sample_animation, setup_pygame):
 
     sample_animation.update(300, position)
 
-    print(f"Frame after last update: {sample_animation.frame}, Timer: {sample_animation._timer}")  # Додаємо друк
+    # Додаємо друк
+    print(
+        f"Frame after last update: {
+            sample_animation.frame}, Timer: {
+            sample_animation._timer}")
 
     assert sample_animation.frame == 0  # Повертається до початку через цикл
-

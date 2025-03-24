@@ -1,17 +1,15 @@
-import pytest
-import os
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pygame
+import pytest
 
-# Припустимо, що ваш код лежить у файлі classes/fruits.py
-from classes.fruits import Fruit, Cherry, Strawberry
-from classes.global_vars import GlobalVars
-from classes.score import Score
-from classes.next_move import NextMove
 from classes.animation import Animation
-from classes.animation_set import AnimationSet
 from classes.coordinates import Coordinate
+# Припустимо, що ваш код лежить у файлі classes/fruits.py
+from classes.fruits import Cherry, Fruit, Strawberry
+from classes.global_vars import GlobalVars
+from classes.next_move import NextMove
+from classes.score import Score
 
 
 @pytest.fixture
@@ -21,7 +19,7 @@ def mock_pygame_image():
     щоб не завантажувати реальні файли під час тестів.
     """
     with patch('pygame.image.load', return_value=MagicMock(spec=pygame.Surface)) as mock_load, \
-         patch('pygame.transform.scale', return_value=MagicMock(spec=pygame.Surface)) as mock_scale:
+            patch('pygame.transform.scale', return_value=MagicMock(spec=pygame.Surface)) as mock_scale:
         yield (mock_load, mock_scale)
 
 
@@ -36,11 +34,16 @@ def mock_os_path_join():
 
 # -------------------- ТЕСТИ ДЛЯ БАЗОВОГО Fruit --------------------
 
-@patch('classes.fruits.Fruit.get_images', return_value=[])         # підміняємо get_images, щоб точно повертав []
+# підміняємо get_images, щоб точно повертав []
+@patch('classes.fruits.Fruit.get_images', return_value=[])
 @patch('classes.fruits.Animation', autospec=True)
 @patch('classes.fruits.Score', autospec=True)
 @patch('classes.fruits.NextMove', autospec=True)
-def test_fruit_init(mock_nextmove, mock_score, mock_animation, mock_get_images):
+def test_fruit_init(
+        mock_nextmove,
+        mock_score,
+        mock_animation,
+        mock_get_images):
     """
     Спрощений тест для конструктора Fruit:
     - Перевіряємо, що зберігаються coordinates, score, next_move, animation
@@ -50,17 +53,25 @@ def test_fruit_init(mock_nextmove, mock_score, mock_animation, mock_get_images):
     fruit = Fruit(coord, points=50)
 
     assert fruit.coordinates == coord
-    assert isinstance(fruit.score, Score), "Fruit має мати поле score (замокане)."
-    assert isinstance(fruit.next_move, NextMove), "Fruit має мати поле next_move (замокане)."
-    assert isinstance(fruit.next_move, NextMove), "Fruit має створювати NextMove."
-    assert isinstance(fruit.animation, Animation), "Fruit має мати поле animation (замокане)."
+    assert isinstance(
+        fruit.score, Score), "Fruit має мати поле score (замокане)."
+    assert isinstance(
+        fruit.next_move, NextMove), "Fruit має мати поле next_move (замокане)."
+    assert isinstance(
+        fruit.next_move, NextMove), "Fruit має створювати NextMove."
+    assert isinstance(
+        fruit.animation, Animation), "Fruit має мати поле animation (замокане)."
 
 
 @patch('classes.fruits.Fruit.get_images', return_value=[])
 @patch('classes.fruits.Animation', autospec=True)
 @patch('classes.fruits.Score', autospec=True)
 @patch('classes.fruits.NextMove', autospec=True)
-def test_fruit_disappear(mock_nextmove, mock_score, mock_animation, mock_get_images):
+def test_fruit_disappear(
+        mock_nextmove,
+        mock_score,
+        mock_animation,
+        mock_get_images):
     """
     Перевіряємо, що disappear():
     - викликає score.active()
@@ -69,7 +80,7 @@ def test_fruit_disappear(mock_nextmove, mock_score, mock_animation, mock_get_ima
     """
     fruit = Fruit(MagicMock(), points=10)
     with patch.object(fruit.score, 'active', wraps=fruit.score.active) as mock_active, \
-         patch.object(fruit.next_move, 'remove_func', wraps=fruit.next_move.remove_func) as mock_remove:
+            patch.object(fruit.next_move, 'remove_func', wraps=fruit.next_move.remove_func) as mock_remove:
         fruit.disappear()
         mock_active.assert_called_once()
         mock_remove.assert_called_once()
@@ -79,7 +90,11 @@ def test_fruit_disappear(mock_nextmove, mock_score, mock_animation, mock_get_ima
 @patch('classes.fruits.Animation', autospec=True)
 @patch('classes.fruits.Score', autospec=True)
 @patch('classes.fruits.NextMove', autospec=True)
-def test_fruit_update(mock_nextmove, mock_score, mock_animation, mock_get_images):
+def test_fruit_update(
+        mock_nextmove,
+        mock_score,
+        mock_animation,
+        mock_get_images):
     """
     Перевіряємо, що update(delta) викликає animation.update(delta).
     Усі внутрішні виклики замокані, щоб уникнути IndexError.

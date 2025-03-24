@@ -1,5 +1,6 @@
-import pygame
 import sys
+
+import pygame
 
 from board import board
 from classes import GlobalVars
@@ -28,15 +29,17 @@ def get_game_params():
         lives = 3
 
     try:
-        color_input = input("Введіть колір фону (r,g,b), дефолт=(0,20,0): ") or "0,20,0"
+        color_input = input(
+            "Введіть колір фону (r,g,b), дефолт=(0,20,0): ") or "0,20,0"
         r, g, b = map(int, color_input.split(","))
         bg_color = (r, g, b)
-    except:
+    except BaseException:
         bg_color = (0, 20, 0)
 
     try:
-        width, height = map(int, input("Введіть ширину та висоту (w,h) (дефолт 900 на 950): ").split(","))
-    except:
+        width, height = map(int, input(
+            "Введіть ширину та висоту (w,h) (дефолт 900 на 950): ").split(","))
+    except BaseException:
         width = 900
         height = 950
 
@@ -68,8 +71,10 @@ def show_start_overlay(screen):
         lines = [text]
 
     # Рендеримо кожен рядок окремо.
-    text_surfaces = [font.render(line, True, (255, 255, 255)) for line in lines]
-    total_height = sum(surf.get_height() for surf in text_surfaces) + (len(text_surfaces) - 1) * 10
+    text_surfaces = [font.render(line, True, (255, 255, 255))
+                     for line in lines]
+    total_height = sum(surf.get_height()
+                       for surf in text_surfaces) + (len(text_surfaces) - 1) * 10
     start_y = (screen.get_height() - total_height) // 2
 
     waiting = True
@@ -86,7 +91,8 @@ def show_start_overlay(screen):
         screen.blit(overlay, (0, 0))
         y = start_y
         for surf in text_surfaces:
-            rect = surf.get_rect(center=(screen.get_width() // 2, y + surf.get_height() // 2))
+            rect = surf.get_rect(
+                center=(screen.get_width() // 2, y + surf.get_height() // 2))
             screen.blit(surf, rect)
             y += surf.get_height() + 10
         pygame.display.flip()
@@ -102,9 +108,11 @@ def show_end_overlay(screen, final_score):
         "Натисніть будь-яку клавішу,",
         "щоб закрити гру"
     ]
-    text_surfaces = [font.render(line, True, (255, 255, 255)) for line in lines]
+    text_surfaces = [font.render(line, True, (255, 255, 255))
+                     for line in lines]
     text_rects = [
-        surface.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + i * 40))
+        surface.get_rect(center=(screen.get_width() // 2,
+                         screen.get_height() // 2 + i * 40))
         for i, surface in enumerate(text_surfaces)
     ]
 
@@ -124,6 +132,7 @@ def show_end_overlay(screen, final_score):
             screen.blit(surface, rect)
         pygame.display.flip()
 
+
 def main():
     # screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Pac-Man Clone")
@@ -132,7 +141,8 @@ def main():
 
     # show_start_overlay(screen)
 
-    level = Level(board, pacman_health=lives, bg_color=bg_color, screen_w=width, screen_h=height)
+    level = Level(board, pacman_health=lives, bg_color=bg_color,
+                  screen_w=width, screen_h=height)
     show_start_overlay(GlobalVars.screen)
 
     running = True

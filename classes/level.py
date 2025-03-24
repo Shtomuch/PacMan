@@ -1,19 +1,28 @@
 import math
+
 import pygame
 
 from classes import Power
+from classes.coordinates import Coordinate
+from classes.ghost import Blinky, Clyde, Inky, Pinky
 from classes.global_vars import GlobalVars
 from classes.interface import Interface
-from classes.tilemap import Tilemap
-from classes.pacman import Pacman
-from classes.ghost import Blinky, Pinky, Inky, Clyde
-from classes.coordinates import Coordinate
 from classes.next_move import NextMove
-
+from classes.pacman import Pacman
+from classes.tilemap import Tilemap
 
 
 class Level:
-    def __init__(self, board, pacman_health=3, bg_color=(0, 20, 0), screen_w=900, screen_h=950):
+    def __init__(
+            self,
+            board,
+            pacman_health=3,
+            bg_color=(
+                0,
+                20,
+                0),
+            screen_w=900,
+            screen_h=950):
         """
         board         – двовимірний список (карта рівня).
         pacman_health – кількість життів.
@@ -95,7 +104,6 @@ class Level:
                     GlobalVars.pacman.death()
                     self.reset_positions()
 
-
                 # # Якщо привид не "dead" і не "в будинку" (бо тоді він неактивний)
                 # if ghost.state in ("alive", "exiting_house"):
                 #     GlobalVars.pacman.death()
@@ -120,14 +128,21 @@ class Level:
 
     def reset_positions(self):
         Power.reset()
-        GlobalVars.pacman = Pacman(GlobalVars.tilemap.pacman_fp, GlobalVars.pacman.health)
+        GlobalVars.pacman = Pacman(
+            GlobalVars.tilemap.pacman_fp, GlobalVars.pacman.health)
         hc = GlobalVars.tilemap.house
 
         for ghost in GlobalVars.ghosts:
             ghost.next_move.remove_func()
 
         GlobalVars.ghosts = []
-        GlobalVars.ghosts.append(Blinky(Coordinate(hc.x_global, hc.y_global - GlobalVars.tile_size * 3)))
+        GlobalVars.ghosts.append(
+            Blinky(
+                Coordinate(
+                    hc.x_global,
+                    hc.y_global -
+                    GlobalVars.tile_size *
+                    3)))
         GlobalVars.ghosts.append(Pinky(hc))
         GlobalVars.ghosts.append(Inky(hc))
         GlobalVars.ghosts.append(Clyde(hc))
@@ -137,6 +152,3 @@ class Level:
         # GlobalVars.pacman.move_unit.coordinates.x_global = self.pacman_start.x_global
         # GlobalVars.pacman.move_unit.coordinates.y_global = self.pacman_start.y_global
         # GlobalVars.pacman.move_unit.direction = 0
-
-
-

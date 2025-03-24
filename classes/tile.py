@@ -1,9 +1,12 @@
 import os
+
 import pygame
+
 from classes.animation import Animation
+from classes.animation_set import AnimationSet
 from classes.global_vars import GlobalVars
 from classes.next_move import NextMove
-from classes.animation_set import AnimationSet
+
 
 class Tile:
     def __init__(self, coordinates, tile_id):
@@ -13,7 +16,8 @@ class Tile:
 
         # Створення анімації для плитки
         self.animation = Animation(self._get_images(), coordinates)
-        # Визначення, чи є плитка стіною (ідентифікатори 1-6) або ґратами (ідентифікатор 7)
+        # Визначення, чи є плитка стіною (ідентифікатори 1-6) або ґратами
+        # (ідентифікатор 7)
         self.is_wall = 1 <= tile_id <= 6
         self.is_grates = (tile_id == 7)
 
@@ -47,13 +51,19 @@ class Tile:
         else:
             img_name, anim_name = images[0]
 
-        img_path = os.path.join("static_file", "map_walls_photos", f"{img_name}.png")
+        img_path = os.path.join(
+            "static_file", "map_walls_photos", f"{img_name}.png")
         frame = pygame.transform.scale(
             pygame.image.load(img_path),
             (GlobalVars.tile_size, GlobalVars.tile_size)
         )
         frames = [frame]
-        return [AnimationSet(frames=frames, time=[0.2] * len(frames), name=anim_name)]
+        return [
+            AnimationSet(
+                frames=frames,
+                time=[0.2] *
+                len(frames),
+                name=anim_name)]
 
     def update(self, delta):
         # Оновлюємо анімацію плитки

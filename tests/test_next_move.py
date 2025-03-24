@@ -1,5 +1,7 @@
-import pytest
 from unittest.mock import Mock
+
+import pytest
+
 from classes.next_move import NextMove
 
 
@@ -30,7 +32,7 @@ def test_next_move_initialization(name, expected_id):
 def test_add_func():
     """Перевіряємо, що функція додається в правильний список подій."""
     func_mock = Mock()
-    move = NextMove("pacman", func_mock)
+    NextMove("pacman", func_mock)
 
     assert func_mock in NextMove.list_of_events[3]
 

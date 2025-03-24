@@ -1,7 +1,7 @@
-from itertools import count
 
 from classes.global_vars import GlobalVars
 from classes.next_move import NextMove
+
 
 class Power:
 

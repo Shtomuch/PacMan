@@ -1,14 +1,13 @@
-import pytest
-from unittest.mock import patch, MagicMock
-import pygame
-import os
+from unittest.mock import MagicMock, patch
 
+import pygame
+import pytest
+
+from classes.animation_set import AnimationSet
 # Припустимо, що BigDot лежить у файлі classes/big_dot.py
 from classes.big_dot import BigDot
 from classes.coordinates import Coordinate
 from classes.global_vars import GlobalVars
-from classes.animation_set import AnimationSet
-from classes.power import Power
 
 
 @pytest.fixture
@@ -18,8 +17,9 @@ def mock_pygame_image():
     аби не завантажувати реальні файли під час тестів.
     """
     with patch('pygame.image.load', return_value=MagicMock(spec=pygame.Surface)) as mock_load, \
-         patch('pygame.transform.scale', return_value=MagicMock(spec=pygame.Surface)) as mock_scale:
+            patch('pygame.transform.scale', return_value=MagicMock(spec=pygame.Surface)) as mock_scale:
         yield (mock_load, mock_scale)
+
 
 @pytest.fixture
 def mock_os_path_join():
@@ -65,8 +65,10 @@ def test_big_dot_get_images():
     frames = BigDot.get_images()
     assert len(frames) == 1, "Очікуємо один AnimationSet."
     anim_set = frames[0]
-    assert isinstance(anim_set, AnimationSet), "Повернений елемент має бути AnimationSet."
-    assert len(anim_set.frames) == 2, "Має бути 2 кадри (big_coin.png і smaller_big_coin.png)."
+    assert isinstance(
+        anim_set, AnimationSet), "Повернений елемент має бути AnimationSet."
+    assert len(
+        anim_set.frames) == 2, "Має бути 2 кадри (big_coin.png і smaller_big_coin.png)."
     assert anim_set.name == "big_dot_animation"
 
 
@@ -90,7 +92,11 @@ def test_big_dot_update(mock_animation):
 @patch('classes.big_dot.NextMove', autospec=True)
 @patch('classes.big_dot.Score', autospec=True)
 @patch('classes.big_dot.Animation', autospec=True)
-def test_big_dot_disappear(mock_anim, mock_score_class, mock_nextmove_class, mock_power_activate):
+def test_big_dot_disappear(
+        mock_anim,
+        mock_score_class,
+        mock_nextmove_class,
+        mock_power_activate):
     """
     Перевіряємо, що disappear():
       - викликає score.active()
@@ -106,7 +112,8 @@ def test_big_dot_disappear(mock_anim, mock_score_class, mock_nextmove_class, moc
     dot = BigDot(Coordinate(10, 10))
     dot.disappear()
 
-    # Перевіряємо, що викликалися score.active(), Power.activate(), next_move.remove_func()
+    # Перевіряємо, що викликалися score.active(), Power.activate(),
+    # next_move.remove_func()
     mock_score_obj.active.assert_called_once()
     mock_power_activate.assert_called_once()
     mock_nextmove_obj.remove_func.assert_called_once()

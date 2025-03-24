@@ -1,10 +1,13 @@
 import os
+
 import pygame
-from classes.score import Score
+
 from classes.animation import Animation
-from classes.next_move import NextMove
 from classes.animation_set import AnimationSet
 from classes.global_vars import GlobalVars
+from classes.next_move import NextMove
+from classes.score import Score
+
 
 class Dot:
     def __init__(self, coordinates):
@@ -23,16 +26,23 @@ class Dot:
         # Завантаження та масштабування зображень для анімації Dot
         dot_frames = [
             pygame.transform.scale(
-                pygame.image.load(os.path.join("static_file", "coin_photos", "coin.png")),
+                pygame.image.load(os.path.join(
+                    "static_file", "coin_photos", "coin.png")),
                 (GlobalVars.tile_size, GlobalVars.tile_size)
             ),
             pygame.transform.scale(
-                pygame.image.load(os.path.join("static_file", "coin_photos", "smaller_coin.png")),
+                pygame.image.load(os.path.join(
+                    "static_file", "coin_photos", "smaller_coin.png")),
                 (GlobalVars.tile_size, GlobalVars.tile_size)
             )
         ]
         # Створення AnimationSet з кадрами та часом відображення
-        dot_animation = [AnimationSet(frames=dot_frames, time=[0.2] * len(dot_frames), name="dot_animation")]
+        dot_animation = [
+            AnimationSet(
+                frames=dot_frames,
+                time=[0.2] *
+                len(dot_frames),
+                name="dot_animation")]
         return dot_animation
 
     def update(self, delta):

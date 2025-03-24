@@ -1,5 +1,7 @@
-import pytest
 from unittest.mock import MagicMock
+
+import pytest
+
 from classes.animation import Animation
 
 
@@ -25,7 +27,10 @@ def sample_animation(sample_animation_sets, sample_coordinates):
     return Animation(sample_animation_sets, sample_coordinates)
 
 
-def test_initial_state(sample_animation, sample_animation_sets, sample_coordinates):
+def test_initial_state(
+        sample_animation,
+        sample_animation_sets,
+        sample_coordinates):
     assert sample_animation.sets == sample_animation_sets
     assert sample_animation.position == sample_coordinates
     assert sample_animation.animation_set == sample_animation_sets[0]
@@ -42,17 +47,20 @@ def test_current_animation_setter(sample_animation, sample_animation_sets):
     assert sample_animation.animation_set == sample_animation_sets[1]
 
     sample_animation.current_animation = "NonExisting"
-    assert sample_animation.animation_set == sample_animation_sets[0]  # Повертається до першого сету
+    # Повертається до першого сету
+    assert sample_animation.animation_set == sample_animation_sets[0]
 
 
 def test_update_when_frozen(sample_animation):
     sample_animation.freeze = True
     sample_animation.update(100)
-    sample_animation.animation_set.draw.assert_called_once_with(sample_animation.position)
+    sample_animation.animation_set.draw.assert_called_once_with(
+        sample_animation.position)
     sample_animation.animation_set.update.assert_not_called()
 
 
 def test_update_when_not_frozen(sample_animation):
     sample_animation.freeze = False
     sample_animation.update(100)
-    sample_animation.animation_set.update.assert_called_once_with(100, sample_animation.position)
+    sample_animation.animation_set.update.assert_called_once_with(
+        100, sample_animation.position)

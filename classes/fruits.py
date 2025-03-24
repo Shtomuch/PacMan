@@ -1,10 +1,12 @@
 import os
+
 import pygame
-from classes.score import Score
+
 from classes.animation import Animation
 from classes.animation_set import AnimationSet
 from classes.global_vars import GlobalVars
 from classes.next_move import NextMove
+from classes.score import Score
 
 
 class Fruit:
@@ -38,14 +40,20 @@ class Cherry(Fruit):
     @staticmethod
     def get_images() -> list:
         # Завантаження зображення для вишні з використанням os.path.join
-        cherry_path = os.path.join("static_file", "fruits_photos", "cherry.png")
+        cherry_path = os.path.join(
+            "static_file", "fruits_photos", "cherry.png")
         cherry_frame = pygame.transform.scale(
             pygame.image.load(cherry_path),
             (GlobalVars.tile_size, GlobalVars.tile_size)
         )
         cherry_frames = [cherry_frame]
         # Створення AnimationSet для вишні
-        cherry_animation = [AnimationSet(frames=cherry_frames, time=[0.2] * len(cherry_frames), name="chery_animation")]
+        cherry_animation = [
+            AnimationSet(
+                frames=cherry_frames,
+                time=[0.2] *
+                len(cherry_frames),
+                name="chery_animation")]
         return cherry_animation
 
 
@@ -57,7 +65,8 @@ class Strawberry(Fruit):
     @staticmethod
     def get_images():
         # Завантаження зображення для полуниці з використанням os.path.join
-        strawberry_path = os.path.join("static_file", "fruits_photos", "strawberry.png")
+        strawberry_path = os.path.join(
+            "static_file", "fruits_photos", "strawberry.png")
         strawberry_frame = pygame.transform.scale(
             pygame.image.load(strawberry_path),
             (GlobalVars.tile_size, GlobalVars.tile_size)
@@ -65,5 +74,9 @@ class Strawberry(Fruit):
         strawberry_frames = [strawberry_frame]
         # Створення AnimationSet для полуниці
         strawberry_animation = [
-            AnimationSet(frames=strawberry_frames, time=[0.2] * len(strawberry_frames), name="strawberry_animation")]
+            AnimationSet(
+                frames=strawberry_frames,
+                time=[0.2] *
+                len(strawberry_frames),
+                name="strawberry_animation")]
         return strawberry_animation

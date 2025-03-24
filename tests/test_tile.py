@@ -29,7 +29,12 @@ def tile_coordinates():
     (0, False, False, "void_animation"),
     (3, True, False, "left_down_animation")
 ])
-def test_tile_properties(tile_id, expected_wall, expected_grates, expected_name, tile_coordinates):
+def test_tile_properties(
+        tile_id,
+        expected_wall,
+        expected_grates,
+        expected_name,
+        tile_coordinates):
     tile = Tile(coordinates=tile_coordinates, tile_id=tile_id)
     assert tile.is_wall == expected_wall
     assert tile.is_grates == expected_grates
@@ -58,4 +63,4 @@ def test_update_calls_animation_update(tile_coordinates, monkeypatch):
 
     monkeypatch.setattr(tile.animation, "update", dummy_update)
     tile.update(0.1)
-    assert update_called[0] == True
+    assert update_called[0]

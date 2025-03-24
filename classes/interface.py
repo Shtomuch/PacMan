@@ -1,15 +1,17 @@
 import os
+
 import pygame
 
 # Імпортуємо необхідні класи з інших модулів
-from classes import NextMove, AnimationSet, Animation, Coordinate
-from classes.score import Score
+from classes import Animation, AnimationSet, Coordinate, NextMove
 from classes.global_vars import GlobalVars
+
 
 class Interface:
     """
     Клас Interface: відповідає за відображення інтерфейсу гри (очки, здоров'я та ін.)
     """
+
     def __init__(self):
         pygame.font.init()
         # Ініціалізуємо шрифт
@@ -26,6 +28,7 @@ class Interface:
         """
         Внутрішній клас для відображення здоров'я Pacman.
         """
+
         def __init__(self):
             self.health = []
             # Додаємо анімацію для кожної "життя" Pacman
@@ -35,7 +38,8 @@ class Interface:
                         Interface.PacmanHealth.get_images(),
                         Coordinate(
                             (10 + i * 1.2) * GlobalVars.tile_size,
-                            (GlobalVars.tilemap.height + 0.5) * GlobalVars.tile_size
+                            (GlobalVars.tilemap.height + 0.5) *
+                            GlobalVars.tile_size
                         )
                     )
                 )
@@ -46,7 +50,8 @@ class Interface:
             health_frames = [
                 pygame.transform.scale(
                     pygame.image.load(
-                        os.path.join('static_file', 'pacman_photos', 'pacman1.png')
+                        os.path.join(
+                            'static_file', 'pacman_photos', 'pacman1.png')
                     ),
                     (GlobalVars.tile_size, GlobalVars.tile_size)
                 )
@@ -80,10 +85,15 @@ class Interface:
         """
         screen = GlobalVars.screen
         if screen:
-            score_text = self.font.render(f'Score: {int(GlobalVars.score)}', True, 'white')
+            score_text = self.font.render(
+                f'Score: {int(GlobalVars.score)}', True, 'white')
             # Виводимо текст у нижній лівий кут
-            screen.blit(score_text, (GlobalVars.tile_size / 2,
-                                     GlobalVars.tilemap.height * GlobalVars.tile_size))
+            screen.blit(
+                score_text,
+                (GlobalVars.tile_size /
+                 2,
+                 GlobalVars.tilemap.height *
+                 GlobalVars.tile_size))
         else:
             print("Error: screen is not initialized in GlobalVars.")
 

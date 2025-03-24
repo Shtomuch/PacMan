@@ -3,8 +3,8 @@
 
 class NextMove:
     list_of_events = []
-    queue = {'tile': 0, 'point': 1, 'power': 2, 'pacman': 3, 'ghost': 4, 'interface': 5}
-
+    queue = {'tile': 0, 'point': 1, 'power': 2,
+             'pacman': 3, 'ghost': 4, 'interface': 5}
 
     def __init__(self, name, func):
         self.id = NextMove.queue[name]

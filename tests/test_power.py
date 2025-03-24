@@ -29,7 +29,7 @@ def test_update_activates_power_when_inactive():
     Power.count = 2
     GlobalVars.power_is_active = False
     Power.update(0.1)
-    assert GlobalVars.power_is_active == True
+    assert GlobalVars.power_is_active
     assert Power.count == 1
     assert Power._timer == 0
 

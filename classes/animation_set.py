@@ -1,5 +1,7 @@
 import pygame
+
 from classes.global_vars import GlobalVars
+
 
 class AnimationSet:
     def __init__(self, frames, time, name):
@@ -18,12 +20,12 @@ class AnimationSet:
         self.cycle = True
 
     def draw(self, position):
-        """Відображаємо поточний кадр анімації, використовуючи позицію як центр."""
         if not self.frames:
             return
 
         current_frame = self.frames[self.frame]
-        rotated_frame = pygame.transform.rotate(current_frame, -90 * self.direction)
+        rotated_frame = pygame.transform.rotate(
+            current_frame, -90 * self.direction)
         frame_rect = rotated_frame.get_rect()
         draw_position = (
             position.x_global - frame_rect.width // 2,
@@ -46,6 +48,6 @@ class AnimationSet:
             if self.frame >= len(self.frames):
                 if self.cycle:
                     self.frame = 0
-                    self._timer = 0 # Скидаємо таймер, щоб зайве не накопичувалося
+                    self._timer = 0
                 else:
                     self.frame -= 1

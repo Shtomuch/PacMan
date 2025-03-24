@@ -45,7 +45,8 @@ def dummy_tile():
     return DummyTile()
 
 
-# Фікстура для налаштування GlobalVars.tilemap (всі запити повертають dummy_tile)
+# Фікстура для налаштування GlobalVars.tilemap (всі запити повертають
+# dummy_tile)
 @pytest.fixture(autouse=True)
 def setup_global_tilemap(dummy_tile):
     class DummyTilemap:
@@ -66,7 +67,8 @@ def patch_pygame(monkeypatch):
 
 @pytest.mark.unit
 def test_get_images_returns_animation_set():
-    # Перевіряємо, що _get_images повертає список з одним AnimationSet із 4 кадрами
+    # Перевіряємо, що _get_images повертає список з одним AnimationSet із 4
+    # кадрами
     anim_sets = Pacman._get_images()
     assert isinstance(anim_sets, list)
     assert len(anim_sets) == 1
@@ -88,7 +90,7 @@ def test_death_reduces_health_and_calls_remove(dummy_coord):
 
     pacman.death()
     assert pacman.health == 2
-    assert called[0] == True
+    assert called[0]
 
 
 @pytest.mark.unit
@@ -114,7 +116,7 @@ def test_update_collects_point(dummy_coord, dummy_tile, monkeypatch):
 
     assert point.disappeared, "Point повинен бути зібраний (disappear викликано)"
     assert dummy_tile.removed, "Tile має викликати remove_object для point"
-    assert update_called[0] == True
+    assert update_called[0]
     # Перевіряємо, що позиція та напрямок анімації оновлено
     assert pacman.animation.position == pacman.move_unit.coordinates
     assert pacman.animation.direction == pacman.move_unit.direction

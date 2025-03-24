@@ -1,8 +1,10 @@
-import pytest
 import pygame
-from classes.interface import Interface
-from classes.global_vars import GlobalVars
+import pytest
+
 from classes.animation import Animation
+from classes.global_vars import GlobalVars
+from classes.interface import Interface
+
 
 @pytest.fixture
 def setup_interface():
@@ -18,6 +20,7 @@ def setup_interface():
     yield interface
     del interface  # Очистимо після тестів
 
+
 def test_pacman_health_initialization(setup_interface):
     """
     Перевіряємо, чи правильно ініціалізується панель здоров'я Pacman.
@@ -25,6 +28,7 @@ def test_pacman_health_initialization(setup_interface):
     interface = setup_interface
     assert len(interface.health_bar.health) == 3  # Має бути 3 життя
     assert all(isinstance(h, Animation) for h in interface.health_bar.health)
+
 
 def test_delete_health(setup_interface):
     """
@@ -38,6 +42,7 @@ def test_delete_health(setup_interface):
     interface.delete_health()
     assert len(interface.health_bar.health) == 0  # Життів не залишилось
 
+
 def test_delete_health_empty(setup_interface):
     """
     Перевіряємо, чи не відбувається помилка при видаленні здоров'я, коли його вже немає.
@@ -48,7 +53,9 @@ def test_delete_health_empty(setup_interface):
         interface.delete_health()
         assert True  # Якщо помилка не виникла, тест успішний
     except IndexError:
-        pytest.fail("Виникла помилка IndexError при видаленні з порожнього списку.")
+        pytest.fail(
+            "Виникла помилка IndexError при видаленні з порожнього списку.")
+
 
 def test_draw_misc(setup_interface):
     """

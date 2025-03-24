@@ -20,10 +20,13 @@ class DummyCoord:
 @pytest.fixture(autouse=True)
 def patch_coordinate(monkeypatch):
     def dummy_get_tile_center(x, y):
-        tile_size = GlobalVars.tile_size if hasattr(GlobalVars, 'tile_size') and GlobalVars.tile_size else 40
+        tile_size = GlobalVars.tile_size if hasattr(
+            GlobalVars, 'tile_size') and GlobalVars.tile_size else 40
         return DummyCoord(x, y, tile_size)
 
-    monkeypatch.setattr("classes.coordinates.Coordinate.get_tile_center", dummy_get_tile_center)
+    monkeypatch.setattr(
+        "classes.coordinates.Coordinate.get_tile_center",
+        dummy_get_tile_center)
 
 
 # Фікстура для простого поля (3x3) з одним гейтом (tile_id=7)
@@ -39,7 +42,8 @@ def simple_board():
 
 @pytest.fixture
 def tilemap(simple_board):
-    # Встановлюємо розміри, щоб GlobalVars.tile_size = 40 (min(height/rows, width/cols))
+    # Встановлюємо розміри, щоб GlobalVars.tile_size = 40 (min(height/rows,
+    # width/cols))
     tm = Tilemap(simple_board, 120, 120)
     return tm
 
@@ -72,7 +76,7 @@ def test_get_neighbour_tiles(tilemap):
 @pytest.mark.unit
 def test_is_in_ghost_house(tilemap):
     # Поле містить плитку з id 7, що задає _gates
-    house = tilemap.house
+    tilemap.house
     # Створюємо координати: одна всередині і одна поза
     inside = DummyCoord(1, 1, GlobalVars.tile_size)
     outside = DummyCoord(10, 10, GlobalVars.tile_size)
@@ -85,7 +89,8 @@ def test_is_in_ghost_house(tilemap):
 @pytest.mark.unit
 def test_update_spawns_fruit(monkeypatch, tilemap):
     # Три перевірки для різних фруктів (Cherry, Strawberry, BigDot)
-    # Проводимо тест для однієї плитки, використовуючи monkeypatch для керування випадковістю.
+    # Проводимо тест для однієї плитки, використовуючи monkeypatch для
+    # керування випадковістю.
     tile = tilemap._tilemap[0][0]
     tile.is_wall = False
     tile.is_grates = False

@@ -1,0 +1,4 @@
+[flake8]
+ignore = E501, E403, W504, E712, F405, F811, E226, F403
+exclude = .venv, build, dist, migrations, .git, .tox, .eggs , .tests/, .pytest_cache, board.py, classes/__init__.py, tests/test_level.py
+max-line-length = 79

@@ -1,1 +1,12 @@
-pygame~=2.6.1
+asgiref==3.8.1
+Booktype==1.5
+Django==5.1.7
+iniconfig==2.0.0
+packaging==24.2
+pluggy==1.5.0
+pygame==2.6.1
+pytest==8.3.5
+redis==5.2.1
+setuptools==76.0.0
+simplejson==3.20.1
+sqlparse==0.5.3
