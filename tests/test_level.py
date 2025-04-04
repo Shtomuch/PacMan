@@ -3,7 +3,7 @@ import math
 from unittest.mock import patch, MagicMock
 import pygame
 
-# Припустимо, що ваш клас Level лежить у файлі level.py
+
 from classes.level import Level
 from classes.global_vars import GlobalVars
 from classes.tilemap import Tilemap
