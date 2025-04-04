@@ -31,6 +31,9 @@ def test_initial_state(
         sample_animation,
         sample_animation_sets,
         sample_coordinates):
+    """
+    Перевіряє початковий стан об'єкта Animation після ініціалізації.
+    """
     assert sample_animation.sets == sample_animation_sets
     assert sample_animation.position == sample_coordinates
     assert sample_animation.animation_set == sample_animation_sets[0]
@@ -39,10 +42,19 @@ def test_initial_state(
 
 
 def test_current_animation_getter(sample_animation):
+    """
+    Перевіряє геттер current_animation:
+    - має повертати назву поточного анімаційного сету.
+    """
     assert sample_animation.current_animation == "Idle"
 
 
 def test_current_animation_setter(sample_animation, sample_animation_sets):
+    """
+    Перевіряє сеттер current_animation:
+    - якщо вказано назву існуючого сету — він має стати активним,
+    - якщо вказано неіснуючу назву — має повертатися до першого сету.
+    """
     sample_animation.current_animation = "Run"
     assert sample_animation.animation_set == sample_animation_sets[1]
 
@@ -52,6 +64,11 @@ def test_current_animation_setter(sample_animation, sample_animation_sets):
 
 
 def test_update_when_frozen(sample_animation):
+    """
+    Перевіряє метод update, коли freeze = True:
+    - не викликається оновлення анімації (update),
+    - викликається лише метод draw з переданими координатами.
+    """
     sample_animation.freeze = True
     sample_animation.update(100)
     sample_animation.animation_set.draw.assert_called_once_with(
@@ -60,6 +77,10 @@ def test_update_when_frozen(sample_animation):
 
 
 def test_update_when_not_frozen(sample_animation):
+    """
+    Перевіряє метод update, коли freeze = False:
+    - має викликатися метод update активного сету з аргументами delta та позицією.
+    """
     sample_animation.freeze = False
     sample_animation.update(100)
     sample_animation.animation_set.update.assert_called_once_with(

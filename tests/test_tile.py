@@ -35,6 +35,9 @@ def test_tile_properties(
         expected_grates,
         expected_name,
         tile_coordinates):
+    """
+    Перевіряє властивості плитки Tile в залежності від її tile_id.
+    """
     tile = Tile(coordinates=tile_coordinates, tile_id=tile_id)
     assert tile.is_wall == expected_wall
     assert tile.is_grates == expected_grates
@@ -45,6 +48,11 @@ def test_tile_properties(
 
 @pytest.mark.unit
 def test_add_and_remove_object(tile_coordinates):
+    """
+    Перевіряє додавання та видалення об'єктів у плитці:
+    - об'єкт має додаватися у список tile.objects,
+    - після видалення об'єкта, він має зникнути зі списку.
+    """
     tile = Tile(coordinates=tile_coordinates, tile_id=0)
     dummy_obj = object()
     tile.add_object(dummy_obj)
@@ -55,6 +63,10 @@ def test_add_and_remove_object(tile_coordinates):
 
 @pytest.mark.unit
 def test_update_calls_animation_update(tile_coordinates, monkeypatch):
+    """
+    Перевіряє, що при виклику tile.update(delta) викликається відповідний
+    метод update у вкладеному об'єкті animation.
+    """
     tile = Tile(coordinates=tile_coordinates, tile_id=0)
     update_called = [False]
 

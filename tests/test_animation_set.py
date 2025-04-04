@@ -23,6 +23,9 @@ def sample_animation():
 
 
 def test_initialization(sample_animation):
+    """
+    Перевіряє коректність ініціалізації об'єкта AnimationSet.
+    """
     assert sample_animation.frames is not None
     assert sample_animation.time == [100, 150, 200]
     assert sample_animation.name == "test_animation"
@@ -33,6 +36,9 @@ def test_initialization(sample_animation):
 
 
 def test_draw_no_frames(setup_pygame):
+    """
+    Перевіряє метод draw для випадку, коли список кадрів порожній.
+    """
     anim = AnimationSet([], [], "empty_animation")
     position = MagicMock()
     position.x_global = 100
@@ -41,6 +47,9 @@ def test_draw_no_frames(setup_pygame):
 
 
 def test_draw(sample_animation, setup_pygame):
+    """
+    Перевіряє, що метод draw коректно працює з реальними кадрами.
+    """
     position = MagicMock()
     position.x_global = 100
     position.y_global = 100
@@ -50,12 +59,18 @@ def test_draw(sample_animation, setup_pygame):
 
 
 def test_update_no_frames(setup_pygame):
+    """
+    Перевіряє метод update при відсутності кадрів.
+    """
     anim = AnimationSet([], [], "empty_animation")
     position = MagicMock()
     anim.update(50, position)  # Не повинно оновлюватися і не падати
 
 
 def test_update(sample_animation, setup_pygame):
+    """
+    Перевіряє логіку оновлення кадрів у методі update.
+    """
     position = MagicMock()
     position.x_global = 100
     position.y_global = 100

@@ -50,12 +50,20 @@ def tilemap(simple_board):
 
 @pytest.mark.unit
 def test_tilemap_dimensions(tilemap):
+    """
+    Перевіряє правильність визначення розмірів мапи (height та width).
+    """
     assert tilemap.height == 3
     assert tilemap.width == 3
 
 
 @pytest.mark.unit
 def test_get_tile(tilemap):
+    """
+    Перевіряє метод get_tile:
+    - Для координат всередині поля повертається об'єкт Tile;
+    - Для координат поза межами поля повертається None.
+    """
     coord = DummyCoord(0, 0, GlobalVars.tile_size)
     tile = tilemap.get_tile(coord)
     assert isinstance(tile, Tile)
@@ -65,6 +73,11 @@ def test_get_tile(tilemap):
 
 @pytest.mark.unit
 def test_get_neighbour_tiles(tilemap):
+    """
+    Перевіряє метод get_neighbour_tiles:
+    - Для центральної плитки повертаються 4 сусідні плитки у правильному порядку;
+    - Кожен сусід повинен існувати (не None) для центральної позиції.
+    """
     center = DummyCoord(1, 1, GlobalVars.tile_size)
     neighbors = tilemap.get_neighbour_tiles(center)
     # Порядок: право, вниз, ліво, вверх.
@@ -75,6 +88,11 @@ def test_get_neighbour_tiles(tilemap):
 
 @pytest.mark.unit
 def test_is_in_ghost_house(tilemap):
+    """
+    Перевіряє метод is_in_ghost_house:
+    - Координата всередині області "будинку привидів" повинна повертати True;
+    - Координата за межами області повинна повертати False.
+    """
     # Поле містить плитку з id 7, що задає _gates
     tilemap.house
     # Створюємо координати: одна всередині і одна поза
@@ -88,6 +106,9 @@ def test_is_in_ghost_house(tilemap):
 
 @pytest.mark.unit
 def test_update_spawns_fruit(monkeypatch, tilemap):
+    """
+    Перевіряє метод update на появу фруктів (Cherry, Strawberry, BigDot) на полі.
+    """
     # Три перевірки для різних фруктів (Cherry, Strawberry, BigDot)
     # Проводимо тест для однієї плитки, використовуючи monkeypatch для
     # керування випадковістю.
